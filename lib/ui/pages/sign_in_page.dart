@@ -78,10 +78,30 @@ class _SignInPageState extends State<SignInPage> {
             margin: EdgeInsets.only(top:24),
             height: 45,
             padding: EdgeInsets.symmetric(horizontal: defaultMargin),
-            child: isLoading ? SpinKitFadingCircle(
-              size:45,
-              color: mainColor,
-            ): RaisedButton(onPressed: () {},
+            child: isLoading 
+            ? loadingIndicator 
+            
+            : RaisedButton(onPressed: () async {
+
+              setState(() {
+                
+                isLoading = true;
+
+              });
+
+              await context.bloc<UserCubit>().signIn(emailController.text, passwordController.text);
+              UserState state = context.bloc<UserCubit>().state;
+
+              if(state is UserLoaded) {
+
+                context.bloc<FoodCubit>().getFoods();
+                context.bloc<TransactionCubit>().getTransactions();
+
+                Get.to(MainPage());
+
+              }
+
+            },
             elevation: 0,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             color: mainColor,
